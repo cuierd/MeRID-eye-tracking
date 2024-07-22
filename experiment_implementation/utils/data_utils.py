@@ -11,7 +11,7 @@ from pygaze.logfile import Logfile
 import constants
 from devices.screen import MultiplEyeScreen
 
-from start_multipleye_session import SessionMode
+from start_merid_session import SessionMode
 
 
 def create_data_logfile(
@@ -37,6 +37,7 @@ def get_stimuli_screens(
         session_mode: SessionMode,
         order_version: int,
         exp_path: str | Path,
+        session_id: int,
         last_completed_stimulus: int = None,
 ) -> (list[dict], int):
 
@@ -66,21 +67,31 @@ def get_stimuli_screens(
         encoding='utf8'
     )
 
-    stimulus_order = stimulus_randomization_df[stimulus_randomization_df.version_number == order_version]
-    try:
-        stimulus_order = stimulus_order[[c for c in stimulus_order.columns if c.startswith('trial') or c.startswith('practice_trial')]].values[0].tolist()
-    except IndexError:
-        raise ValueError(f'No stimulus order found for version {order_version}!')
-
     # if we run the exp in test mode or minimal mode, we just take the items that are there
     # in test mode there can be stimuli missing that will be there in the final experiment
     if session_mode.value == 'test' or session_mode.value == 'minimal':
         stimulus_order = stimulus_df['stimulus_id'].tolist()
 
+    else:
+        stimulus_order = stimulus_randomization_df[stimulus_randomization_df.version_number == order_version]
+        try:
+            stimulus_order = stimulus_order[
+                [c for c in stimulus_order.columns if c.startswith('trial') or c.startswith('practice_trial')]].values[
+                0].tolist()
+        except IndexError:
+            raise ValueError(f'No stimulus order found for version {order_version}!')
+
     continue_now = False
     total_page_count = 0
 
     question_order_versions = []
+
+    # for merid we have two sessions: in the first session we take the first half of the stimuli,
+    # in the second session, the second half. 1st and 2nd are the two practice trials
+    if session_id == 1:
+        stimulus_order = [stimulus_order[0]] + stimulus_order[2:7]
+    elif session_id == 2:
+        stimulus_order = [stimulus_order[1]] + stimulus_order[7:]
 
     for trial_id, item_id in enumerate(stimulus_order):
 

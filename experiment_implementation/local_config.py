@@ -1,6 +1,6 @@
-LANGUAGE = "toy"
-COUNTRY_CODE = "x"
-CITY = "x"
-YEAR = 1
+LANGUAGE = "en"
+COUNTRY_CODE = "ch"
+CITY = "Zurich"
+YEAR = 2025
 LAB_NUMBER = 1
 DUMMY_MODE = True

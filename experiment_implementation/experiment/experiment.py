@@ -25,7 +25,7 @@ from pygaze.mouse import Mouse
 
 from devices.screen import MultiplEyeScreen
 
-from start_multipleye_session import SessionMode
+from start_merid_session import SessionMode
 
 from experiment.participant_questionnaire import MultiplEYEParticipantQuestionnaire
 
@@ -93,6 +93,10 @@ class Experiment:
         self.log_completed_stimuli = pd.DataFrame(
             columns=['timestamp_started', 'timestamp_completed',
                      'stimulus_id', 'stimulus_name', 'completed']
+        )
+        self.log_completed_stimuli.to_csv(
+            f'{abs_exp_path}/logfiles/completed_stimuli.csv', index=False,
+            sep=','
         )
 
         self._eye_tracker = EyeTracker(
@@ -265,11 +269,11 @@ class Experiment:
         # if a core session has been restarted we need to update the trial numbering
         start_trial = 0
         if self.session_mode.value == 'core':
-            # note that this is specific for the mutipleye experiment, 2 practice and 10 normal trials
+            # note that this is specific for the merid experiment, 1 practice and 5 normal trials
             if practice:
-                start_trial = 2 - len(stimuli_dicts)
+                start_trial = 1 - len(stimuli_dicts)
             else:
-                start_trial = 10 - len(stimuli_dicts)
+                start_trial = 5 - len(stimuli_dicts)
 
         for trial_nr, screens in enumerate(stimuli_dicts):
 

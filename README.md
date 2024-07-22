@@ -46,7 +46,7 @@ If you'd like to run it, make sure you have completed the above steps, and you h
 Activate the environment:
 
 ```bash
-conda activate multipleye3.9
+conda activate merid3.9
 ```
 
 Then you can navigate to the root folder of your local clone of the repository (your path should now end with 
@@ -54,7 +54,7 @@ Then you can navigate to the root folder of your local clone of the repository (
 [CONDA_ENVIRONMENT.md](guidelines/markdown/CONDA_ENVIRONMENT.md) in section 4). Run the following command to run the dummy experiment:
 
 ```bash
-python experiment_implementation/start_multipleye_session.py
+python experiment_implementation/start_merid_session.py
 ```
 
 In the GUI that will pop up you can tick the box `Dummy version` to run the experiment in dummy mode.
@@ -95,24 +95,3 @@ Note that using pip to install pylink installs a different package although the 
 these step-by-step instructions
 of how to install `pylink` can be found here: [INSTALL_PYLINK.md](guidelines/markdown/INSTALL_PYLINK.md)
 
-### Run and develop experiments for Tobii
-An early version of the experiment has been tested with tobii eye-trackers. However, the code is not yet fully developed
-and tested as the experiment as been developed further since then. If you want to use a tobii eye-tracker, you definitively
-need to follow the following steps. Once those are completed, it will still be necessary to adjust the code in order to
-work with the tobii eye-trackers: 
-1. Install Tobii Pro SDK: [link](https://connect.tobii.com/s/sdk-downloads?language=en_US)
-2. Download the SDK
-3. Unzip the folder and copy all files from either the '32' or '64' folder to the experiment_implementation folder
-4. Then you can pip install the package: ``pip install tobii_research``
-
-### Develop and run experiments for other eye-trackers
-Depending on what is needed we can add more eye-trackers. There is also a team that is trying to set up experiment 
-using a webcam. Please contact [multipleye@cl.uzh.ch](mailto:multipleye@cl.uzh.ch) for more information.
-
-## Upload the data
-After you have run a MultiplEYE session, no matter if pilot or real experiment, please make sure to:
-1. Always save the entire `data` folder in a safe location locally as you do for other data collections.
-2. Upload the `data` to the MultiplEYE server. When you preregistered, you should have 
-received a folder where to upload the data.
-3. Whenever you collect data from a new participant, please upload the entire `data` folder to the server, 
-replacing the old one.

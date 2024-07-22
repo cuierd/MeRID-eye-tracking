@@ -7,7 +7,7 @@ from pathlib import Path
 import constants
 import pandas as pd
 
-from start_multipleye_session import SessionMode
+from start_merid_session import SessionMode
 
 
 class ValidateParticipantIDAction(argparse.Action):
@@ -77,14 +77,14 @@ def determine_stimulus_order_version(participant_id: int = None) -> int:
         stimulus_order = randomization_df[randomization_df.participant_id == participant_id]
         if stimulus_order.empty:
             print('Are you sure that the participant ID is correct? I cannot find a run with the participant.')
-            raise ValueError(f'The participant ID {participant_id} does not exist in the randomization file.'
-                             f'You cannot restart this session.')
+            raise ValueError(f'The participant ID {participant_id} does not exist in the randomization file. '
+                             f'You cannot restart this session or collect a second session for this participant.')
 
     else:
         try:
             stimulus_order = randomization_df[randomization_df.participant_id.isna()].sample(1)
         except ValueError:
-            print('All stimulus orders have been used. Please contact the experimenter.')
+            print('All stimulus orders have been used. Please contact the experimenter. ')
             raise ValueError('All stimulus orders have been used. Please contact the experimenter.')
 
     order_version = stimulus_order['version_number'].values[0]

@@ -79,11 +79,11 @@ def parse_args():
     participants.add_argument(
         '--session_id',
         metavar=translations['session_id'],
-        default=1,
         help=translations['session_id_help'],
         required=True,
         type=int,
-        gooey_options={'visible': False},
+        choices=[1, 2],
+        gooey_options={'visible': True},
     )
 
     participants.add_argument(
@@ -315,8 +315,17 @@ def start_experiment_session():
         # if the item version has not been manually set, we determine it
         stimulus_order_version = arguments['stimulus_order_version']
         if stimulus_order_version == -1:
-            stimulus_order_version = experiment_utils.determine_stimulus_order_version()
-            arguments['stimulus_order_version'] = stimulus_order_version
+
+            # if it is the second core or pilot session we retrieve the stimulus order for this participant
+            if arguments['session_id'] == 2 and arguments['session_mode'].value in ['core', 'pilot']:
+                stimulus_order_version = experiment_utils.determine_stimulus_order_version(
+                    participant_id=arguments['participant_id']
+                )
+                arguments['stimulus_order_version'] = stimulus_order_version
+
+            else:
+                stimulus_order_version = experiment_utils.determine_stimulus_order_version()
+                arguments['stimulus_order_version'] = stimulus_order_version
 
         arguments['data_screens_path'] = constants.EXP_ROOT_PATH / constants.STIMULI_IMAGES_CSV
         arguments['instruction_screens_path'] = constants.EXP_ROOT_PATH / constants.PARTICIPANT_INSTRUCTIONS_CSV

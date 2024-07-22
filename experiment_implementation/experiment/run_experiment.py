@@ -10,7 +10,7 @@ import pandas as pd
 from pygaze.libtime import get_time
 from pygaze.logfile import Logfile
 from experiment.experiment import Experiment
-from start_multipleye_session import SessionMode
+from start_merid_session import SessionMode
 from utils import data_utils, experiment_utils
 from utils.experiment_utils import determine_last_stimulus
 
@@ -28,7 +28,7 @@ def run_experiment(
         continue_core_session: bool = False,
 
 ) -> None:
-    if not continue_core_session:
+    if not continue_core_session and not session_id == 2:
         experiment_utils.mark_stimulus_order_version_used(stimulus_order_version, participant_id, session_mode)
 
     participant_id_str = str(participant_id)
@@ -112,7 +112,7 @@ def run_experiment(
     general_log_file.write([get_time(), 'start preparing stimuli screens'])
     stimuli_screens, total_num_pages = data_utils.get_stimuli_screens(
         data_screens_path, question_screens_path, data_logfile, session_mode, stimulus_order_version,
-        absolute_exp_result_path, last_completed_stimulus_id
+        absolute_exp_result_path, session_id, last_completed_stimulus_id
     )
     general_log_file.write([get_time(), 'finished preparing stimuli screens'])
 
@@ -154,7 +154,11 @@ def run_experiment(
     experiment.run_experiment()
     general_log_file.write([get_time(), 'finished experiment'])
 
-    experiment.finish_experiment(participant_questionnaire=True)
+    # only run PQ in first session
+    if session_id == 1:
+        experiment.finish_experiment(participant_questionnaire=True)
+    elif session_id == 2:
+        experiment.finish_experiment(participant_questionnaire=False)
 
     general_log_file.write([get_time(), 'END'])
 
