@@ -1,12 +1,6 @@
 # MultiplEYE WG1: Experiment Implementation
 
-This repository contains the code for a MultiplEYE eye-tracking-while-reading experiment for multiple languages.
-After you have read this README make sure to read the relevant files in the guidelines folder. There exists a MARKDOWN 
-and a HTML version of the guidelines. Both are exactly the same. You can read whatever format you prefer. Also for this README, 
-there exist two versions.
-
-If you would like to contribute, please read the following guidelines: [CONTRIBUTING.md](guidelines/markdown/CONTRIBUTING.md) and
-contact [multipleye@cl.uzh.ch](mailto:multipleye@cl.uzh.ch).
+This repository contains the code for the [MeRID](https://www.cl.uzh.ch/en/research-groups/digital-linguistics/research/MeRID.html) eye-tracking-while-reading experiment for multiple languages.
 
 ## Contents
 - [Installation](#installation)
