@@ -215,6 +215,15 @@ def parse_args():
         choices=PARTICIPANT_IDS,
     )
 
+    danger_zone.add_argument(
+        '--session_id_continued',
+        metavar=translations['session_id'],
+        help=translations['session_id_help'],
+        type=int,
+        choices=[1, 2],
+        gooey_options={'visible': True},
+    )
+
     args = vars(parser.parse_args())
 
     return args
@@ -275,6 +284,14 @@ def start_experiment_session():
                 )
             else:
                 arguments['participant_id'] = arguments['participant_id_continued']
+
+            if not arguments['session_id_continued']:
+                raise ValueError(
+                    'You have to select the session ID from the dropdown '
+                    'at the bottom to continue the core session.'
+                )
+            else:
+                arguments['session_id'] = arguments['session_id_continued']
             arguments['session_mode'] = SessionMode.CORE
             arguments['dataset_type'] = 'core_dataset'
             arguments['stimulus_order_version'] = experiment_utils.determine_stimulus_order_version(
@@ -282,6 +299,7 @@ def start_experiment_session():
             )
 
         arguments.pop('participant_id_continued', None)
+        arguments.pop('session_id_continued', None)
         arguments['date'] = str(date.today())
 
         if arguments['session_mode'].value == 'test':

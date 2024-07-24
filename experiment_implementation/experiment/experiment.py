@@ -91,7 +91,7 @@ class Experiment:
         self.relative_edf_file_path = f'{rel_exp_path}/{edf_file_path}'
 
         self.log_completed_stimuli = pd.DataFrame(
-            columns=['timestamp_started', 'timestamp_completed',
+            columns=['timestamp_started', 'timestamp_completed', 'trial_id',
                      'stimulus_id', 'stimulus_name', 'completed']
         )
         self.log_completed_stimuli.to_csv(

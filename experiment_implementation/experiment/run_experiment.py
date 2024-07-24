@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime
 import os
+import shutil
 
 import constants
 import pandas as pd
@@ -28,6 +29,8 @@ def run_experiment(
         continue_core_session: bool = False,
 
 ) -> None:
+
+    # mark current stimulus order version as used
     if not continue_core_session and not session_id == 2:
         experiment_utils.mark_stimulus_order_version_used(stimulus_order_version, participant_id, session_mode)
 
@@ -58,31 +61,41 @@ def run_experiment(
         relative_exp_result_path = f'{constants.RESULT_FOLDER_PATH}/{dataset_type.lower()}/{participant_result_folder}'
 
         if continue_core_session:
-            completed_stimuli_df, csv_path, last_completed_stimulus_id, last_trial_id = determine_last_stimulus(
+            result = determine_last_stimulus(
                 relative_exp_result_path
                 )
+            # if the result is a tuple we can unpack it otherwise there is no point in restarting the session
+            print(result)
+            if result is not None:
+                completed_stimuli_df, csv_path, last_completed_stimulus_id, last_trial_id = result
 
-            if not last_trial_id:
-                last_trial_id = 'full_restart'
+                if not last_trial_id:
+                    last_trial_id = 'full_restart'
 
-            relative_exp_result_path = (f'{constants.RESULT_FOLDER_PATH}/{dataset_type.lower()}/'
-                                        f'{participant_result_folder}_start_after_trial_{last_trial_id}')
+                relative_exp_result_path = (f'{constants.RESULT_FOLDER_PATH}/{dataset_type.lower()}/'
+                                            f'{participant_result_folder}_start_after_trial_{last_trial_id}')
 
-            absolute_exp_result_path = os.path.abspath(relative_exp_result_path)
+                absolute_exp_result_path = os.path.abspath(relative_exp_result_path)
 
-            # add a note in the completed_stimuli.csv file that the session has been continued
-            new_row = {
-                'timestamp_started': pd.NA, 'timestamp_completed': pd.NA, 'trial_id': pd.NA, 'stimulus_id': pd.NA,
-                'stimulus_name': absolute_exp_result_path, 'completed': 'restart',
-            }
+                # add a note in the completed_stimuli.csv file that the session has been continued
+                new_row = {
+                    'timestamp_started': pd.NA, 'timestamp_completed': pd.NA, 'trial_id': pd.NA, 'stimulus_id': pd.NA,
+                    'stimulus_name': absolute_exp_result_path, 'completed': 'restart',
+                }
 
-            completed_stimuli_df = pd.concat([completed_stimuli_df, pd.DataFrame(new_row, index=[0])])
-            completed_stimuli_df.to_csv(csv_path, index=False)
+                completed_stimuli_df = pd.concat([completed_stimuli_df, pd.DataFrame(new_row, index=[0])])
+                completed_stimuli_df.to_csv(csv_path, index=False)
+
+            else:
+                shutil.rmtree(relative_exp_result_path, ignore_errors=True)
+                os.mkdir(relative_exp_result_path)
+                absolute_exp_result_path = os.path.abspath(relative_exp_result_path)
 
         else:
             os.mkdir(relative_exp_result_path)
             absolute_exp_result_path = os.path.abspath(relative_exp_result_path)
 
+    # create logfiles folder
     if not os.path.isdir(f'{absolute_exp_result_path}/logfiles/'):
         os.makedirs(f'{absolute_exp_result_path}/logfiles/')
 

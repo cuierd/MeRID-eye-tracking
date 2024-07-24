@@ -120,13 +120,23 @@ def mark_stimulus_order_version_used(order_version: int, participant_id: int, se
         randomization_df.to_csv(constants.STIMULUS_RANDOMIZATION_CSV, sep=',', index=False, encoding='utf8')
 
 
-def determine_last_stimulus(relative_exp_result_path: str) -> tuple[pd.DataFrame, str, int | None, str | None]:
+def determine_last_stimulus(relative_exp_result_path: str) -> tuple[pd.DataFrame, str, int | None, str | None] | None:
+    """
+    Determine the last stimulus that has been completed in the experiment. Needed for continuing a session for a
+    participant with the correct stimulus ID.
+    """
     csv_path = f'{relative_exp_result_path}/logfiles/completed_stimuli.csv'
-    completed_stimuli_df = pd.read_csv(csv_path, sep=',', encoding='utf8')
 
-    if not len(list(Path(relative_exp_result_path).glob('*.edf'))) == 1:
-        raise FileNotFoundError(f'Continue session: No EDF file found in the {relative_exp_result_path}. Please check the path. '
-                                f'You HAVE to copy the edf file from the host PC otherwise it will be overwritten.')
+    if os.path.isfile(csv_path):
+        completed_stimuli_df = pd.read_csv(csv_path, sep=',', encoding='utf8')
+    else:
+        # if the file does not exist, we return None as the experiment was interrupted before anything could happen
+        return None
+
+    if not constants.DUMMY_MODE:
+        if not len(list(Path(relative_exp_result_path).glob('*.edf'))) == 1:
+            raise FileNotFoundError(f'Continue session: No EDF file found in the {relative_exp_result_path}. Please check the path. '
+                                    f'You HAVE to copy the edf file from the host PC otherwise it will be overwritten.')
 
     # if the file is empty, we return None
     try:
